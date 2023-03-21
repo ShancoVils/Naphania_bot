@@ -2,38 +2,35 @@ import telebot
 from dotenv import load_dotenv
 import os
 import openai
+from . import bot_settings
 
 load_dotenv()
 
 TOKEN = os.getenv('TELEGTAM_BOT_KEY')
-bot = telebot.TeleBot(TOKEN)
+
 
 CHAT_GPT_KEY = os.getenv('CHATGPT_KEY')
 engine = "text-davinci-003"
 
 
-# handlers
+
+bot = telebot.TeleBot(TOKEN)
+
 @bot.message_handler(commands=['start', 'go'])
 def start_handler(message):
-    bot.send_message(message.chat.id, 'Привет')
+    bot.send_message(message.chat.id, 'Привет, ама бот')
 
 
 @bot.message_handler(content_types=['text'])
 def text_handler(message):
-    text = message.text.lower()
-    chat_id = message.chat.id
-
     openai.api_key = os.getenv('CHATGPT_KEY')
-    engine = "text-davinci-003"
-    prompt = text
-    print(prompt)
-
-    completion = openai.Completion.create(model=engine,
-                                          prompt=prompt,
+    completion = openai.Completion.create(model=bot_settings.ENGINE,
+                                          prompt=message.text,
                                           temperature=0.5,
-                                          max_tokens=1000)
-    print(completion.choices[0])
-    bot.send_message(chat_id, completion.choices[0]['text'])
+                                          max_tokens=3500)
+    bot.send_message(message.chat.id, completion.choices[0]['text'])
 
 
-bot.polling()
+class Bot:
+    def start_app():
+        application = bot.polling()

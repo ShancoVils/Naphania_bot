@@ -1,0 +1,3 @@
+ENGINE = "text-davinci-003"
+TEMPERATURE = 0.5
+MAX_TOKENS = 3500
